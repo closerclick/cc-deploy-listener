@@ -78,13 +78,17 @@ El listener responde `200 {pong:true}` al ping y `202 {queued:true}` al push.
 
 ## Estado de los servicios (jun 2026)
 
-| Servicio | Host | Repo | Unit systemd | Listo para CD |
+| Servicio | Host | Repo | Restart | Listo para CD |
 |---|---|---|---|---|
-| proxy | proxy.closer.click | closerclick/simple-websocket-proxy (main) | `cc-proxy` | ✅ |
-| proxy2 | proxy2.closer.click | closerclick/simple-websocket-proxy (main) | `cc-proxy2` | ✅ |
-| signer | proxy.closer.click | seyacat/closer-click-signer (main) | pm2 `closer-click-signer` | ✅ (restart por pm2) |
-| geo | proxy2.closer.click | closerclick/closer-click-geo | `closer-click-geo` | ⚠️ `~/closer-click-geo` no es checkout git |
-| reputation | proxy2.closer.click | closerclick/closer-click-reputation | `closer-click-reputation` | ⚠️ idem geo |
+| proxy | proxy.closer.click | closerclick/simple-websocket-proxy (main) | pm2 `cc-proxy` | ✅ |
+| proxy2 | proxy2.closer.click | closerclick/simple-websocket-proxy (main) | pm2 `cc-proxy2` | ✅ |
+| signer | proxy.closer.click | closerclick/closer-click-signer (main) | pm2 `closer-click-signer` | ✅ |
+| geo | proxy2.closer.click | closerclick/closer-click-geo | systemd `closer-click-geo` | ⚠️ `~/closer-click-geo` no es checkout git |
+| reputation | proxy2.closer.click | closerclick/closer-click-reputation | systemd `closer-click-reputation` | ⚠️ idem geo |
+
+Todos los servicios en CD hoy corren bajo **PM2** → el listener reinicia con `pm2
+restart` (sin sudo). geo/reputation siguen en systemd y aún no están en CD; al
+sumarlos conviene migrarlos también a pm2 para no reintroducir sudo.
 
 **Normalización pendiente** para los ⚠️: volver el directorio un checkout git del
 repo (`git init` + `remote add` + `fetch` + `reset --hard`, o re-clonar) y, para el
