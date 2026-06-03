@@ -14,18 +14,19 @@
       "healthUrl": "http://127.0.0.1:4001/health"
     },
     "closerclick/closer-click-geo": {
-      "_pendiente": "~/closer-click-geo NO es un checkout git (se desplegó por copia/Docker). Convertirlo a checkout git o ajustar dir al repo real antes de habilitar.",
-      "dir": "/home/seyacat/closer-click-geo",
-      "branch": "main",
-      "unit": "closer-click-geo",
-      "npm": "ci"
+      "_nota": "repo root ~/closer-click-geo; la app vive en server/ (package.json+node_modules+.env ahí). dir=server: git opera sobre el repo (sube al .git) y npm corre donde están las deps.",
+      "dir": "/home/seyacat/closer-click-geo/server",
+      "branch": "master",
+      "pm2": "closer-click-geo",
+      "npm": "ci",
+      "healthUrl": "http://127.0.0.1:8090/health"
     },
     "closerclick/closer-click-reputation": {
-      "_pendiente": "~/closer-click-reputation NO es un checkout git. Misma normalización que geo.",
-      "dir": "/home/seyacat/closer-click-reputation",
+      "dir": "/home/seyacat/closer-click-reputation/server",
       "branch": "main",
-      "unit": "closer-click-reputation",
-      "npm": "ci"
+      "pm2": "closer-click-reputation",
+      "npm": "ci",
+      "healthUrl": "http://127.0.0.1:8091/health"
     }
   }
 }
