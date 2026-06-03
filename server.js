@@ -60,8 +60,13 @@ function run(cmd, args, opts = {}) {
     });
   });
 }
-// Ejecuta un script con shell de login: carga ~/.nvm para tener node/npm/git en PATH.
-function bashlc(script, cwd) { return run('bash', ['-lc', script], { cwd }); }
+// Ejecuta un script cargando nvm explícitamente: el ~/.bashrc de muchos hosts
+// corta temprano en shells no-interactivos y NO deja node/npm/pm2 en el PATH.
+// Sourceamos nvm a mano para que npm/pm2 resuelvan siempre (git es del sistema).
+function bashlc(script, cwd) {
+  const nvm = 'export NVM_DIR="$HOME/.nvm"; [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" >/dev/null 2>&1; ';
+  return run('bash', ['-lc', nvm + script], { cwd });
+}
 
 async function deploy(name, r) {
   if (!r.dir || !r.branch) throw new Error(`repo ${name} sin dir/branch`);
@@ -69,8 +74,12 @@ async function deploy(name, r) {
   await bashlc(`git fetch origin ${r.branch}`, r.dir);
   await bashlc(`git reset --hard origin/${r.branch}`, r.dir);
   if (r.npm) await bashlc(`npm ${r.npm}`, r.dir);
-  if (r.unit) await run('sudo', ['-n', 'systemctl', 'restart', r.unit]);
-  log(`deploy ${name} OK (${r.unit ? 'restarted ' + r.unit : 'no restart'})`);
+  // Restart: por systemd (sudo, requiere NOPASSWD) o por pm2 (sin sudo). Un repo
+  // declara `unit` (systemd) o `pm2` (nombre de la app pm2), no ambos.
+  if (r.pm2) await bashlc(`pm2 restart ${r.pm2}`, r.dir);
+  else if (r.unit) await run('sudo', ['-n', 'systemctl', 'restart', r.unit]);
+  const how = r.pm2 ? 'pm2 restart ' + r.pm2 : r.unit ? 'restarted ' + r.unit : 'sin restart';
+  log(`deploy ${name} OK (${how})`);
   if (r.healthUrl) {
     try { await bashlc(`curl -fsS -m 8 ${r.healthUrl} >/dev/null`, r.dir); log(`health ${name} OK`); }
     catch (_) { log(`health ${name} FAIL (${r.healthUrl})`); }

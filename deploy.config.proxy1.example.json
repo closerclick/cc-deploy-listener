@@ -14,10 +14,10 @@
       "healthUrl": "http://127.0.0.1:4001/health"
     },
     "seyacat/closer-click-signer": {
-      "_pendiente": "el signer corre en una session-scope, sin systemd unit. Crear cc-signer.service y poner aquí unit: cc-signer.",
+      "_nota": "el signer lo supervisa PM2 (no systemd); se reinicia por pm2, sin sudo.",
       "dir": "/home/seyacat/closer-click-signer",
       "branch": "main",
-      "unit": null,
+      "pm2": "closer-click-signer",
       "npm": "ci"
     }
   }

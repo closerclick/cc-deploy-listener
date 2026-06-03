@@ -26,8 +26,11 @@ checkout local.
 - Sólo actúa ante `push` a la rama configurada del repo configurado; todo lo demás
   responde 202/204 e ignora.
 - **Serializa** los deploys (cola) para que dos webhooks no colisionen.
-- Corre como `seyacat` (git/npm con el dueño correcto) + **sudoers NOPASSWD** sólo
-  para `systemctl restart <unit>` (no da sudo general).
+- Corre como `seyacat` (git/npm con el dueño correcto). Restart por **systemd**
+  (`unit`, requiere **sudoers NOPASSWD** sólo para `systemctl restart <unit>`) o
+  por **pm2** (`pm2`, sin sudo). Un repo declara uno u otro.
+- Carga **nvm** explícitamente antes de cada comando (npm/pm2), porque el
+  `~/.bashrc` de muchos hosts no deja node en el PATH de shells no-interactivos.
 - `SIGHUP` recarga la config sin reiniciar.
 
 ## Instalar en un host
@@ -79,7 +82,7 @@ El listener responde `200 {pong:true}` al ping y `202 {queued:true}` al push.
 |---|---|---|---|---|
 | proxy | proxy.closer.click | closerclick/simple-websocket-proxy (main) | `cc-proxy` | ✅ |
 | proxy2 | proxy2.closer.click | closerclick/simple-websocket-proxy (main) | `cc-proxy2` | ✅ |
-| signer | proxy.closer.click | seyacat/closer-click-signer (main) | — (corre en session-scope) | ⚠️ crear `cc-signer.service` |
+| signer | proxy.closer.click | seyacat/closer-click-signer (main) | pm2 `closer-click-signer` | ✅ (restart por pm2) |
 | geo | proxy2.closer.click | closerclick/closer-click-geo | `closer-click-geo` | ⚠️ `~/closer-click-geo` no es checkout git |
 | reputation | proxy2.closer.click | closerclick/closer-click-reputation | `closer-click-reputation` | ⚠️ idem geo |
 
