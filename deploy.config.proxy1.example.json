@@ -9,7 +9,7 @@
     "closerclick/simple-websocket-proxy": {
       "dir": "/home/seyacat/simple-websocket-proxy",
       "branch": "main",
-      "unit": "cc-proxy",
+      "pm2": "cc-proxy",
       "npm": "ci",
       "healthUrl": "http://127.0.0.1:4001/health"
     },
