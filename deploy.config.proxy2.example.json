@@ -1,0 +1,31 @@
+{
+  "_comment": "Config para el host proxy2.closer.click (VPS multi-servicio). Copiala a deploy.config.json y poné un secret real.",
+  "host": "127.0.0.1",
+  "port": 9099,
+  "path": "/hooks/deploy",
+  "secret": "CHANGE_ME",
+  "logFile": "/home/seyacat/cc-deploy/deploy.log",
+  "repos": {
+    "closerclick/simple-websocket-proxy": {
+      "dir": "/home/seyacat/proxy2",
+      "branch": "main",
+      "unit": "cc-proxy2",
+      "npm": "ci",
+      "healthUrl": "http://127.0.0.1:4001/health"
+    },
+    "closerclick/closer-click-geo": {
+      "_pendiente": "~/closer-click-geo NO es un checkout git (se desplegó por copia/Docker). Convertirlo a checkout git o ajustar dir al repo real antes de habilitar.",
+      "dir": "/home/seyacat/closer-click-geo",
+      "branch": "main",
+      "unit": "closer-click-geo",
+      "npm": "ci"
+    },
+    "closerclick/closer-click-reputation": {
+      "_pendiente": "~/closer-click-reputation NO es un checkout git. Misma normalización que geo.",
+      "dir": "/home/seyacat/closer-click-reputation",
+      "branch": "main",
+      "unit": "closer-click-reputation",
+      "npm": "ci"
+    }
+  }
+}
